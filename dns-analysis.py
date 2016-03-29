@@ -33,9 +33,16 @@ def build_dns_map():
 
     for pkt in dns_pkt_list:
 
-        if pkt[DNSRR].type == 1 or pkt[DNSRR].type == 28 or pkt[DNSRR].type == 15:           #DNS Type A (1) or AAAA(28) or MX(15)
+        for i in range(0, len(pkt[DNSRR]) + 1):                                                             #Loop through second level of DNS Response Record packets
 
-            dns_dict[pkt[DNSRR].rrname].add(pkt[DNSRR].rdata)                                #Add IP address to dictionary with key of domain name
+            try:
+                if pkt[DNSRR][i].type == 1 or pkt[DNSRR][i].type == 28 or pkt[DNSRR][i].type == 15:           #DNS Type A (1) or AAAA(28) or MX(15)
+
+                    dns_dict[pkt[DNSRR][i].rrname].add(pkt[DNSRR][i].rdata)                                #Add IP address to dictionary with key of domain name
+
+            except IndexError:
+
+                break
 
     return dns_dict.items()
 '''
